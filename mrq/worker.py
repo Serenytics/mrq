@@ -627,7 +627,8 @@ class Worker(object):
             job._save_status("maxconcurrency", exception=True)
 
         except RetryInterrupt:
-            self.log.error("Caught retry")
+            # log an info msg instead of error as we (@Serenytics) use it a lot as a feature
+            self.log.info("Caught retry")
             job.save_retry(sys.exc_info()[1])
 
         except MaxRetriesInterrupt:
