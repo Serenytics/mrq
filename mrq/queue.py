@@ -111,7 +111,7 @@ class Queue(object):
     def add_to_known_queues(self, timestamp=None):
         """ Adds this queue to the shared list of known queues """
         now = timestamp or time.time()
-        context.connections.redis.zadd(Queue.redis_key_known_queues(), now, self.id)
+        context.connections.redis.zadd(Queue.redis_key_known_queues(), {self.id: now})
         self.known_queues[self.id] = now
 
     def remove_from_known_queues(self):
@@ -369,6 +369,7 @@ class Queue(object):
                 values = list(job_ids.values())
                 job_ids = {k: values[i] for i, k in enumerate(serialized_job_ids)}
 
+            # no migration to redis-py 3.X as we do not use sorted queue
             context.connections.redis.zadd(self.redis_key, **job_ids)
 
         # LIST
@@ -398,6 +399,7 @@ class Queue(object):
                 now = time.time()
                 params_list = {x: now for x in params_list}
 
+            # no migration to redis-py 3.5 as we do not use sorted queue
             context.connections.redis.zadd(self.redis_key, **params_list)
 
         # SET

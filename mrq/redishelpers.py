@@ -2,6 +2,7 @@ from builtins import range
 from .utils import memoize
 from . import context
 
+# not migrated for redis-py 3.X as only used for timed queue
 
 @memoize
 def redis_zaddbyscore():
